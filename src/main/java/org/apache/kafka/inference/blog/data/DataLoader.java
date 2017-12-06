@@ -29,8 +29,9 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.groupingBy;
+//import static java.util.stream.Collectors.groupingBy;
 
 public final class DataLoader {
 
@@ -56,9 +57,13 @@ public final class DataLoader {
 
     private static Map<String, List<String>> loadFilteredByAirportRegex(int airportIndex, File flightsFile) throws IOException {
         return Files.readAllLines(flightsFile.toPath()).stream()
-            .filter(airportMatcher.apply(airportIndex))
+            //.filter(airportMatcher.apply(airportIndex))
+        		.filter(line -> TOP_15_BUSIEST_AIRPORTS.matcher(line.split(",")[airportIndex]).matches())
             .map(cleanQuotes)
-            .collect(groupingBy(line -> getFieldAt.apply(AIRPORT_INDEX, line)));
+            .peek(line -> System.out.println(line))
+            //.collect(groupingBy(line -> getFieldAt.apply(AIRPORT_INDEX, line)));
+            .collect(Collectors.groupingBy(line ->line.split(",")[airportIndex]));
+            
     }
 
     public static void main(String[] args) throws Exception {
@@ -69,7 +74,7 @@ public final class DataLoader {
 
     }
 
-    private static void printMap(Map<String, List<String>> map) {
+    public static void printMap(Map<String, List<String>> map) {
         for (Map.Entry<String, List<String>> stringListEntry : map.entrySet()) {
             LOG.info("{} number flights {}", stringListEntry.getKey(), stringListEntry.getValue().size());
         }

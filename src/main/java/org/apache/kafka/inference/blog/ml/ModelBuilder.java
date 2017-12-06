@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 public final class ModelBuilder {
@@ -77,18 +78,24 @@ public final class ModelBuilder {
         return regressionMap;
     }
 
-    private static Map<String, List<String>> getRandomSampling(Map<String, List<String>> allData) {
+    public static Map<String, List<String>> getRandomSampling(Map<String, List<String>> allData) {
         Map<String, List<String>> sample = new HashMap<>();
         SecureRandom random = new SecureRandom();
+        //Random random = new Random();
         for (Map.Entry<String, List<String>> entry : allData.entrySet()) {
             int total = entry.getValue().size() > MAX_RECORDS ? MAX_RECORDS : entry.getValue().size();
             String key = entry.getKey();
             List<String> allFlights = entry.getValue();
             Collections.shuffle(allFlights);
             Set<String> flights = new HashSet<>();
-            while (flights.size() < total) {
-                flights.add(allFlights.get(random.nextInt(allFlights.size())));
+            if(entry.getValue().size() < total * 2) {
+            	     flights.addAll(allFlights);
+            } else {
+            	    while (flights.size() < total) {
+                    flights.add(allFlights.get(random.nextInt(allFlights.size())));
+                }
             }
+            
             sample.put(key, new ArrayList<>(flights));
         }
         return sample;

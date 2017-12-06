@@ -15,10 +15,11 @@
  * limitations under the License.
  */
 
+apply plugin: 'java'
+apply plugin: 'maven'
+
 group 'org.apache.kafka'
 version '1.0-SNAPSHOT'
-
-apply plugin: 'java'
 
 sourceCompatibility = 1.8
 
@@ -41,6 +42,27 @@ task runOnlinePredictions(type: JavaExec) {
     classpath sourceSets.main.runtimeClasspath
     main = "org.apache.kafka.inference.blog.streams.KStreamsOnLinePredictions"
 }
+
+/*
+task writeNewPom << {
+    pom {
+        project {
+            groupId 'org.apache.kafka'
+            version '1.0-SNAPSHOT'
+            
+            inceptionYear '2014'
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    distribution 'repo'
+                }
+            }
+            
+        }
+    }.writeTo("pom.xml")
+}
+*/
 
 dependencies {
     compile group: 'org.apache.kafka', name: 'kafka-streams', version: '0.11.0.0'

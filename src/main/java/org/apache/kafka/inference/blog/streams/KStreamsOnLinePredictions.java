@@ -57,7 +57,8 @@ public class KStreamsOnLinePredictions {
         // this stream reads in the raw airline data and does the updating of onlineRegression
         KStream<String, String> dataByAirportStream = builder.stream("raw-airline-data");
 
-        GlobalKTable<String, byte[]> regressionsByAirPortTable = builder.globalTable(Serdes.String(), byteArraySerde, "onlineRegression-by-airport");
+		GlobalKTable<String, byte[]> regressionsByAirPortTable = builder.globalTable(Serdes.String(), byteArraySerde,
+				"onlineRegression-by-airport", "onlineRegression-by-airport-kstore");
 
         // stream reads raw data joins with co-efficients then makes prediction
         dataByAirportStream.join(regressionsByAirPortTable,
@@ -125,7 +126,7 @@ public class KStreamsOnLinePredictions {
         Properties props = new Properties();
         props.put(StreamsConfig.APPLICATION_ID_CONFIG, "streams-online-inferencing");
         props.put(StreamsConfig.CLIENT_ID_CONFIG, "streams-online-inferencing-clientID");
-        props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "34.210.58.160:9072");
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
         props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");

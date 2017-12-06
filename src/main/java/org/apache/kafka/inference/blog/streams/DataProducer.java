@@ -48,7 +48,7 @@ public final class DataProducer {
             populateGlobalKTable();
         } else {
             LOG.info("Sending simulated for updating model");
-            List<String> sampleFiles = Arrays.asList("incoming_data1.csv", "incoming_data1.csv", "incoming_data1.csv");
+            List<String> sampleFiles = Arrays.asList("incoming_data1.csv", "incoming_data2.csv", "incoming_data3.csv");
             for (String sampleFile : sampleFiles) {
                 sendRawData(sampleFile);
                 Thread.sleep(30000);
@@ -59,7 +59,8 @@ public final class DataProducer {
 
     public static void sendRawData(String fileName) throws InterruptedException, IOException {
         LOG.info("Sending some raw data and \"new\" update data to run demo");
-        Map<String, List<String>> dataToLoad = DataLoader.getFlightDataByAirport("src/main/resources/" + fileName);
+		Map<String, List<String>> dataToLoad = DataLoader
+				.getFlightDataByAirport(DataLoader.class.getClassLoader().getResource(fileName).getPath());
         Producer<String, String> producer = getDataProducer();
         int counter = 0;
         int maxPerAirport = 200;
@@ -89,7 +90,8 @@ public final class DataProducer {
     public static void populateGlobalKTable() throws IOException {
         LOG.info("Building the model");
 
-        Map<String, byte[]> model = ModelBuilder.buildModel("src/main/resources/allFlights.txt");
+        Map<String, byte[]> model = ModelBuilder.buildModel(
+        		DataLoader.class.getClassLoader().getResource("allFlights.txt").getPath());
 
         LOG.info("Model built, populating topic for GlobalKTable with {} ", model);
 
@@ -115,7 +117,7 @@ public final class DataProducer {
 
     private static Properties getProps(String valueSerializer) {
         Properties props = new Properties();
-        props.put("bootstrap.servers", "localhost:9092");
+        props.put("bootstrap.servers", "34.210.58.160:9072");
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", valueSerializer);
         return props;
